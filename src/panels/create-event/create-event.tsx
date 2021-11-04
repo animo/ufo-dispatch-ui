@@ -16,18 +16,28 @@ const { useEffect, useState, useRef, useMemo } = React;
 const HARDCODED_EMERGENCY_ADDRESS = '80 biltstraat netherlands';
 
 export const CreateEvent: React.FunctionComponent = () => {
+  const history = useHistory();
+  const { api } = useAppContext();
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-
   const mapMarkerRef = useRef<undefined | mapboxgl.Marker>();
   const locations = useState<any[]>([]);
 
-  const { handleSubmit, errors, setFieldValue, values } = useFormik({
+  const {
+    handleSubmit,
+    errors,
+    touched,
+    setFieldValue,
+    setFieldTouched,
+    values,
+    isValid,
+    dirty,
+  } = useFormik({
     initialValues: {
       emergencyCode: 'code_a',
       requiredSkills: [],
       desiredActions: [],
     },
-    validateOnChange: false,
+    validateOnChange: true,
     validateOnBlur: false,
     validateOnMount: false,
     validate: async (fields) => {
@@ -36,7 +46,7 @@ export const CreateEvent: React.FunctionComponent = () => {
         errors.requiredSkills = 'At least one skill must be selected.';
       }
       if (!fields.desiredActions.length) {
-        errors.requiredSkills = 'At least one action must be selected.';
+        errors.desiredActions = 'At least one action must be selected.';
       }
 
       return errors;
@@ -58,8 +68,6 @@ export const CreateEvent: React.FunctionComponent = () => {
       } catch (e) {}
     },
   });
-
-  console.log('errors', errors);
 
   const updateAddress = useMemo(
     () =>
@@ -87,14 +95,16 @@ export const CreateEvent: React.FunctionComponent = () => {
     map.onClick((latlon) => {
       map.setCurrentEventPin(latlon);
     });
-  });
+  }, []);
 
   useEffect(() => {
     updateAddress(HARDCODED_EMERGENCY_ADDRESS, true);
   }, []);
 
-  const history = useHistory();
-  const { api } = useAppContext();
+  const setField = (name: string, value: any) => {
+    setFieldValue(name, value);
+    setFieldTouched(name);
+  };
 
   return (
     <Panel>
@@ -107,7 +117,7 @@ export const CreateEvent: React.FunctionComponent = () => {
           <Box marginBottom="1.2rem">
             <Dropdown
               onChange={(v) => {
-                setFieldValue('emergencyCode', v);
+                setField('emergencyCode', v);
               }}
               label="Melding type"
               value={values.emergencyCode}
@@ -127,8 +137,10 @@ export const CreateEvent: React.FunctionComponent = () => {
             <Combobox
               label="Kwalificatie"
               selected={values.requiredSkills}
-              onChange={(v) => setFieldValue('requiredSkills', v)}
-              error={errors.requiredSkills}
+              onChange={(v) => {
+                setField('requiredSkills', v);
+              }}
+              error={touched.requiredSkills ? errors.requiredSkills : undefined}
               options={[
                 { label: 'Diploma manschap', value: 'skill_a' },
                 { label: 'Diploma EHBO', value: 'skill_b' },
@@ -152,12 +164,16 @@ export const CreateEvent: React.FunctionComponent = () => {
                 { label: 'Kleine blusmiddelen', value: 'action_c' },
                 { label: 'Ontruiming', value: 'action_d' },
               ]}
-              onChange={(v) => setFieldValue('desiredActions', v)}
-              error={errors.requiredSkills}
+              onChange={(v) => {
+                setField('desiredActions', v);
+              }}
+              error={touched.desiredActions ? errors.desiredActions : undefined}
             />
           </Box>
           <Box marginBottom="0.5rem">
-            <Button type="submit">Create event</Button>
+            <Button disabled={!isValid} type="submit">
+              Create event
+            </Button>
           </Box>
         </form>
       )}
