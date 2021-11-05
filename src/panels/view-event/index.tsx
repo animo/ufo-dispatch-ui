@@ -1,14 +1,13 @@
 import * as React from 'react';
-// import { v4 } from 'uuid';
-import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-// import { RestAPI, WebSocket } from 'common-types';
+import { useHistory, useParams } from 'react-router-dom';
 import { connect, Socket } from 'socket.io-client';
-import { Box, Text, Button, Spinner, Textarea } from '@chakra-ui/react';
+import { Box, Button, Spinner } from '@chakra-ui/react';
 
-import { Panel } from '../../components';
+import { Panel, Text } from '../../components';
 import { useAppContext } from '../../app_context';
 import { map } from '../../services/map';
+import { Emergency } from '../../lib/api';
 
 const { useState, useEffect, useRef } = React;
 
@@ -22,21 +21,32 @@ const Banner = styled.div`
   top: 0;
   left: 0;
   right: 0;
+  line-height: 1.2;
   height: 2rem;
 `;
-
-const DISPATCH_USER_CHAT_ID = 'DISPATCH_USER_CHAT_ID';
 
 export const ViewEvent: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
   const { api, wsUrl } = useAppContext();
   const history = useHistory();
+  const [currentEmergency, setCurrentEmergency] = useState<
+    undefined | Emergency
+  >();
+
+  useEffect(() => {
+    const refreshEmergency = async () => {
+      setCurrentEmergency(await api.emergency.get(parseInt(id, 10)));
+    };
+    refreshEmergency();
+    const i = setInterval(refreshEmergency, 2000);
+    return () => clearInterval(i);
+  }, [api, id]);
 
   // const [event, setEvent] = useState<null | RestAPI.Dispatch.GetEventResponse>(
   //   null
   // );
 
-  const [socket, setSocket] = useState<undefined | typeof Socket>();
+  // const [socket, setSocket] = useState<undefined | typeof Socket>();
 
   // const [messages, setMessages] = useState<any[]>([
   //   {
@@ -103,71 +113,41 @@ export const ViewEvent: React.FunctionComponent = () => {
   //   return () => socket && socket.close();
   // }, [event]);
 
-  useEffect(() => {
-    if (socket) {
-      // Hack to make the text input display full screen
-      document
-        .querySelector('.message-input')!
-        .setAttribute('style', 'width: 100%');
-    }
-  }, [socket]);
+  // useEffect(() => {
+  //   if (socket) {
+  //     // Hack to make the text input display full screen
+  //     document
+  //       .querySelector('.message-input')!
+  //       .setAttribute('style', 'width: 100%');
+  //   }
+  // }, [socket]);
 
   return (
     <>
-      <Banner>
-        <Text fontSize="1.2rem">Test</Text>
-      </Banner>
+      {currentEmergency && (
+        <Banner>
+          <Text size="l">
+            {currentEmergency.longitude},{currentEmergency.latitude}
+          </Text>
+        </Banner>
+      )}
       <Panel>
-        {!event && <Spinner size="lg" />}
-        {socket && (
-          <>
-            <Box marginBottom="1.2rem">
-              <Box marginBottom="0.8rem">
-                <Text fontSize="1.2rem" fontWeight="500">
-                  User:
-                </Text>
-              </Box>
-              <ChatBox
-                messages={messages}
-                user={{
-                  uid: DISPATCH_USER_CHAT_ID,
-                }}
-                onSubmit={(m) => {
-                  setMessages((ms) =>
-                    ms.concat({
-                      id: v4(),
-                      text: m,
-                      sender: {
-                        name: 'Dispatch',
-                        uid: DISPATCH_USER_CHAT_ID,
-                        avatar:
-                          'https://image.freepik.com/free-vector/call-center-service-illustration_24877-52388.jpg',
-                      },
-                    })
-                  );
-                }}
-              />
-            </Box>
-            {event && (
-              <Button
-                onClick={() => {
-                  if (socket && event) {
-                    const endEventMessage: WebSocket.Action = {
-                      type: 'dispatch->server/end-emergency-event',
-                      payload: {
-                        eventId: event.id,
-                      },
-                    };
-                    socket.emit('message', endEventMessage);
-                  }
-                  history.push('/');
-                }}
-              >
-                End emergency
-              </Button>
-            )}
-          </>
+        {!currentEmergency && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignContent="center"
+            flexDirection="column"
+          >
+            <div>
+              <p>
+                <Text size="m">Searching for participants...</Text>
+              </p>
+            </div>
+            <Spinner size="lg" />
+          </Box>
         )}
+        {currentEmergency && 'TODO'}
       </Panel>
     </>
   );

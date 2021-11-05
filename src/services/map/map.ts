@@ -22,6 +22,16 @@ class MyMap {
     return this._map;
   }
 
+  getCurrentEventLatLon(): undefined | LatLon {
+    const lngLat = this.markers.currentEvent?.getLngLat();
+    if (lngLat) {
+      return {
+        lat: lngLat.lat,
+        lon: lngLat.lng,
+      };
+    }
+  }
+
   centerOnEventPin(): void {
     const latLng = this.markers.currentEvent?.getLngLat();
     if (latLng) this.map.setCenter(latLng);

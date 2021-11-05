@@ -7,7 +7,7 @@ const Container = styled.div`
   width: 500px;
   min-height: 250px;
   position: relative;
-  top: 1rem;
+  top: 2rem;
   left: 1rem;
 `;
 

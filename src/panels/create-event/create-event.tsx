@@ -34,7 +34,7 @@ export const CreateEvent: React.FunctionComponent = () => {
     dirty,
   } = useFormik({
     initialValues: {
-      emergencyCode: 'code_a',
+      emergencyCode: undefined,
       requiredSkills: [],
       desiredActions: '',
     },
@@ -43,6 +43,9 @@ export const CreateEvent: React.FunctionComponent = () => {
     validateOnMount: false,
     validate: async (fields) => {
       const errors: Record<string, string> = {};
+      if (!fields.emergencyCode) {
+        errors.emergencyCode = 'This field cannot be empty';
+      }
       if (!fields.requiredSkills.length) {
         errors.requiredSkills = 'At least one skill must be selected.';
       }
@@ -66,7 +69,15 @@ export const CreateEvent: React.FunctionComponent = () => {
         //   longitude: lng,
         // });
         // history.push(`/event/${id}`);
-        history.push(`/event/temp`);
+        const { lat, lon } = map.getCurrentEventLatLon()!;
+        const { id } = await api.emergency.create({
+          emergencyTypeId: values.emergencyCode.value,
+          qualificationIds: values.requiredSkills.map(({ value }) => value),
+          requiredAction: values.desiredActions,
+          latitude: lat,
+          longitude: lon,
+        });
+        history.push(`/event/${id}`);
       } catch (e) {}
     },
   });
@@ -75,7 +86,7 @@ export const CreateEvent: React.FunctionComponent = () => {
     return masterData.emergencyTypes.map((emergencyType) => {
       return {
         label: emergencyType.description,
-        value: String(emergencyType.id),
+        value: emergencyType.id,
       };
     });
   }, [masterData]);
@@ -135,12 +146,13 @@ export const CreateEvent: React.FunctionComponent = () => {
       {!isCreatingEvent && (
         <form onSubmit={handleSubmit}>
           <Box marginBottom="1.2rem">
-            <Dropdown
+            <Combobox
+              multi={false}
               onChange={(v) => {
                 setField('emergencyCode', v);
               }}
               label="Melding type"
-              value={values.emergencyCode}
+              selected={values.emergencyCode}
               options={emergencyTypeOptions}
             />
           </Box>

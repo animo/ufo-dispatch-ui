@@ -9,6 +9,24 @@ export interface EmergencyType {
   createdAt: string;
 }
 
+export interface Emergency {
+  id: number;
+  createdAt: string;
+  qualifications?: Qualification[];
+  requiredAction: string;
+  type: number;
+  longitude: number;
+  latitude: number;
+}
+
+export interface AddEmergencyPostBody {
+  emergencyTypeId: number;
+  latitude: number;
+  longitude: number;
+  qualificationIds?: Array<number>;
+  requiredAction: string;
+}
+
 export interface Qualification {
   name: string;
   schema: string;
@@ -60,7 +78,31 @@ export const createAPI = ({ baseUrl }: { baseUrl: string }) => {
         );
         return data.filter(filterAllowedTypeCodes);
       },
+      async create(emergency: AddEmergencyPostBody): Promise<Emergency> {
+        const qIdsString = emergency.qualificationIds.join(',');
+        const body = {
+          ...emergency,
+          qualificationIds: qIdsString,
+        };
+        const { data } = await axios.post(
+          baseUrl + '/emergency',
+          new URLSearchParams(
+            Object.entries(body) as [string, string][]
+          ).toString(),
+          {
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded',
+            },
+          }
+        );
+        return data;
+      },
+      async get(id: number): Promise<Emergency> {
+        const { data } = await axios.get<Emergency[]>(baseUrl + '/emergency');
+        return data.find((e) => e.id === id);
+      },
     },
+
     qualifications: {
       async getAll(): Promise<Qualification[]> {
         const { data } = await axios.get<Qualification[]>(

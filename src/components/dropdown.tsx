@@ -7,7 +7,7 @@ import { FormField } from './form-field';
 interface Props {
   label: string;
   value: string;
-  options: Array<{ value: string; label: string }>;
+  options: Array<{ value: number | string; label: string }>;
   onChange: (e: any) => void;
 }
 

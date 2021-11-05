@@ -10,6 +10,7 @@ interface Props {
   options: Array<{ value: string | number; label: string }>;
   onChange: (e: any) => void;
   error?: any;
+  multi?: boolean;
 }
 
 export const Combobox: FunctionComponent<Props> = ({
@@ -18,6 +19,7 @@ export const Combobox: FunctionComponent<Props> = ({
   selected,
   onChange,
   error,
+  multi = true,
 }) => {
   return (
     <FormField label={label} error={error}>
@@ -27,7 +29,7 @@ export const Combobox: FunctionComponent<Props> = ({
           control: (styles) => ({ ...styles, display: 'flex', flexGrow: 1 }),
         }}
         onChange={onChange}
-        isMulti
+        isMulti={multi}
         options={options as any}
         value={selected}
       />
