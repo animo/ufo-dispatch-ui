@@ -1,3 +1,3 @@
 export { CreateEvent } from './create-event';
 
-// export { ActiveEvent } from './active-event';
+export { ViewEvent } from './view-event';

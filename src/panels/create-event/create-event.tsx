@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 
 // import { RestAPI } from 'common-types';
 
-import { Panel, TextInput, Dropdown, Combobox } from '../../components';
+import { Panel, TextArea, Dropdown, Combobox } from '../../components';
 import { map } from '../../services/map';
 import { useAppContext } from '../../app_context';
 
@@ -35,7 +35,7 @@ export const CreateEvent: React.FunctionComponent = () => {
     initialValues: {
       emergencyCode: 'code_a',
       requiredSkills: [],
-      desiredActions: [],
+      desiredActions: '',
     },
     validateOnChange: true,
     validateOnBlur: false,
@@ -45,8 +45,8 @@ export const CreateEvent: React.FunctionComponent = () => {
       if (!fields.requiredSkills.length) {
         errors.requiredSkills = 'At least one skill must be selected.';
       }
-      if (!fields.desiredActions.length) {
-        errors.desiredActions = 'At least one action must be selected.';
+      if (!fields.desiredActions) {
+        errors.desiredActions = 'This field cannot be empty';
       }
 
       return errors;
@@ -59,12 +59,13 @@ export const CreateEvent: React.FunctionComponent = () => {
       const { lat, lng } = mapMarkerRef.current.getLngLat();
 
       try {
-        const { id } = await api.dispatchEvent.create({
-          ...values,
-          latitude: lat,
-          longitude: lng,
-        });
-        history.push(`/event/${id}`);
+        // const { id } = await api.dispatchEvent.create({
+        //   ...values,
+        //   latitude: lat,
+        //   longitude: lng,
+        // });
+        // history.push(`/event/${id}`);
+        history.push(`/event/temp`);
       } catch (e) {}
     },
   });
@@ -155,15 +156,15 @@ export const CreateEvent: React.FunctionComponent = () => {
             />
           </Box>
           <Box marginBottom="1.2rem">
-            <Combobox
-              label="Actie(s)"
-              selected={values.desiredActions}
-              options={[
-                { label: 'Eerste hulp', value: 'action_a' },
-                { label: 'Schouwen', value: 'action_b' },
-                { label: 'Kleine blusmiddelen', value: 'action_c' },
-                { label: 'Ontruiming', value: 'action_d' },
-              ]}
+            <TextArea
+              label="Actie"
+              value={values.desiredActions}
+              // options={[
+              //   { label: 'Eerste hulp', value: 'action_a' },
+              //   { label: 'Schouwen', value: 'action_b' },
+              //   { label: 'Kleine blusmiddelen', value: 'action_c' },
+              //   { label: 'Ontruiming', value: 'action_d' },
+              // ]}
               onChange={(v) => {
                 setField('desiredActions', v);
               }}
