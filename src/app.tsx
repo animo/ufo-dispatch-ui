@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { map } from './services/map';
 import { MAP_Z_INDEX, CONTROLS_Z_INDEX } from './constants';
 import { Overlay } from './components';
-import { CreateEvent, ActiveEvent } from './panels';
+import { CreateEvent, ViewEvent } from './panels';
 
 const { useRef, useEffect, useState } = React;
 
@@ -36,7 +36,7 @@ export const App: React.FunctionComponent = () => {
       <Overlay level={CONTROLS_Z_INDEX} style={{ pointerEvents: 'none' }}>
         <BrowserRouter>
           <Switch>
-            <Route path="/event/:id">{mapMounted && <ActiveEvent />}</Route>
+            <Route path="/event/:id">{mapMounted && <ViewEvent />}</Route>
             <Route path="/">{mapMounted && <CreateEvent />}</Route>
           </Switch>
         </BrowserRouter>
