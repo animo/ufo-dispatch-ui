@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { connect, Socket } from 'socket.io-client';
 import { Box, Text, Button, Spinner, Textarea } from '@chakra-ui/react';
 import 'react-chatbox-component/dist/style.css';
-import { ChatBox } from 'react-chatbox-component';
 
 import { Panel } from '../../components';
 import { useAppContext } from '../../app_context';
@@ -116,11 +115,9 @@ export const ActiveEvent: React.FunctionComponent = () => {
 
   return (
     <>
-      {event && (
-        <Banner>
-          <Text fontSize="1.2rem">{event.address}</Text>
-        </Banner>
-      )}
+      <Banner>
+        <Text fontSize="1.2rem">Test</Text>
+      </Banner>
       <Panel>
         {!event && <Spinner size="lg" />}
         {socket && (
