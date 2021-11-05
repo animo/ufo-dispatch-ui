@@ -5,7 +5,6 @@ import styled from 'styled-components';
 // import { RestAPI, WebSocket } from 'common-types';
 import { connect, Socket } from 'socket.io-client';
 import { Box, Text, Button, Spinner, Textarea } from '@chakra-ui/react';
-import 'react-chatbox-component/dist/style.css';
 
 import { Panel } from '../../components';
 import { useAppContext } from '../../app_context';
@@ -28,7 +27,7 @@ const Banner = styled.div`
 
 const DISPATCH_USER_CHAT_ID = 'DISPATCH_USER_CHAT_ID';
 
-export const ActiveEvent: React.FunctionComponent = () => {
+export const ViewEvent: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
   const { api, wsUrl } = useAppContext();
   const history = useHistory();

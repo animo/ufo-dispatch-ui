@@ -17,7 +17,8 @@ const HARDCODED_EMERGENCY_ADDRESS = '80 biltstraat netherlands';
 
 export const CreateEvent: React.FunctionComponent = () => {
   const history = useHistory();
-  const { api } = useAppContext();
+  const { api, masterData } = useAppContext();
+
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const mapMarkerRef = useRef<undefined | mapboxgl.Marker>();
   const locations = useState<any[]>([]);
@@ -69,6 +70,24 @@ export const CreateEvent: React.FunctionComponent = () => {
       } catch (e) {}
     },
   });
+
+  const emergencyTypeOptions = useMemo(() => {
+    return masterData.emergencyTypes.map((emergencyType) => {
+      return {
+        label: emergencyType.description,
+        value: String(emergencyType.id),
+      };
+    });
+  }, [masterData]);
+
+  const qualificationsOptions = useMemo(() => {
+    return masterData.qualifications.map((qualification) => {
+      return {
+        label: qualification.name,
+        value: qualification.id,
+      };
+    });
+  }, [masterData]);
 
   const updateAddress = useMemo(
     () =>
@@ -122,16 +141,7 @@ export const CreateEvent: React.FunctionComponent = () => {
               }}
               label="Melding type"
               value={values.emergencyCode}
-              options={[
-                { label: 'Ongeval letsel', value: 'code_a' },
-                { label: 'Ongeval weg letsel', value: 'code_b' },
-                { label: 'Buitenbrand', value: 'code_c' },
-                { label: 'Brand onderwijs/gezondheidszorg', value: 'code_d' },
-                {
-                  label: 'Beginnende brand in allerlei type classificaties',
-                  value: 'code_e',
-                },
-              ]}
+              options={emergencyTypeOptions}
             />
           </Box>
           <Box marginBottom="1.2rem">
@@ -142,17 +152,20 @@ export const CreateEvent: React.FunctionComponent = () => {
                 setField('requiredSkills', v);
               }}
               error={touched.requiredSkills ? errors.requiredSkills : undefined}
-              options={[
-                { label: 'Diploma manschap', value: 'skill_a' },
-                { label: 'Diploma EHBO', value: 'skill_b' },
-                { label: 'LRH', value: 'skill_c' },
-                { label: 'Diploma BHV', value: 'skill_d' },
-                {
-                  label: 'Kleine blusmiddelen (dronepiloot)',
-                  value: 'skill_e',
-                },
-                { label: 'Kleine blusmiddelen', value: 'skill_f' },
-              ]}
+              options={
+                //   [
+                //   { label: 'Diploma manschap', value: 'skill_a' },
+                //   { label: 'Diploma EHBO', value: 'skill_b' },
+                //   { label: 'LRH', value: 'skill_c' },
+                //   { label: 'Diploma BHV', value: 'skill_d' },
+                //   {
+                //     label: 'Kleine blusmiddelen (dronepiloot)',
+                //     value: 'skill_e',
+                //   },
+                //   { label: 'Kleine blusmiddelen', value: 'skill_f' },
+                // ]
+                qualificationsOptions
+              }
             />
           </Box>
           <Box marginBottom="1.2rem">
