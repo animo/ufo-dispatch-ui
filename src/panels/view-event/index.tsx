@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { useHistory, useParams } from 'react-router-dom';
 import { connect, Socket } from 'socket.io-client';
-import { Box, Button, Spinner } from '@chakra-ui/react';
+import { Flex, Box, Button, Spinner, Spacer } from '@chakra-ui/react';
 
 import { Panel, Text } from '../../components';
 import { useAppContext } from '../../app_context';
@@ -27,11 +27,8 @@ const Banner = styled.div`
 
 export const ViewEvent: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
-  const { api, wsUrl } = useAppContext();
+  const { api, currentEmergency, setCurrentEmergency } = useAppContext();
   const history = useHistory();
-  const [currentEmergency, setCurrentEmergency] = useState<
-    undefined | Emergency
-  >();
 
   useEffect(() => {
     const refreshEmergency = async () => {
@@ -132,22 +129,23 @@ export const ViewEvent: React.FunctionComponent = () => {
         </Banner>
       )}
       <Panel>
-        {!currentEmergency && (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignContent="center"
-            flexDirection="column"
-          >
-            <div>
-              <p>
+        <Flex
+          justifyContent="center"
+          alignContent="center"
+          flexDirection="column"
+        >
+          {!currentEmergency?.responder && (
+            <>
+              <Box>
                 <Text size="m">Searching for participants...</Text>
-              </p>
-            </div>
-            <Spinner size="lg" />
-          </Box>
-        )}
-        {currentEmergency && 'TODO'}
+              </Box>
+              <Box>
+                <Spinner size="lg" />
+              </Box>
+            </>
+          )}
+          {currentEmergency?.responder && 'TODO'}
+        </Flex>
       </Panel>
     </>
   );

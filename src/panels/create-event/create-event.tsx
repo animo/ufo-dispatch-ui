@@ -17,7 +17,7 @@ const HARDCODED_EMERGENCY_ADDRESS = '80 biltstraat netherlands';
 
 export const CreateEvent: React.FunctionComponent = () => {
   const history = useHistory();
-  const { api, masterData } = useAppContext();
+  const { api, masterData, setCurrentEmergency } = useAppContext();
 
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const mapMarkerRef = useRef<undefined | mapboxgl.Marker>();
@@ -70,13 +70,15 @@ export const CreateEvent: React.FunctionComponent = () => {
         // });
         // history.push(`/event/${id}`);
         const { lat, lon } = map.getCurrentEventLatLon()!;
-        const { id } = await api.emergency.create({
+        const emergency = {
           emergencyTypeId: values.emergencyCode.value,
           qualificationIds: values.requiredSkills.map(({ value }) => value),
           requiredAction: values.desiredActions,
           latitude: lat,
           longitude: lon,
-        });
+        };
+        const { id } = await api.emergency.create(emergency);
+        setCurrentEmergency(emergency);
         history.push(`/event/${id}`);
       } catch (e) {}
     },

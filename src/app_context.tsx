@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { createAPI, EmergencyType, Qualification } from './lib/api';
+import { createAPI, Emergency, EmergencyType, Qualification } from './lib/api';
 
 const { createContext, useContext, useState, useEffect, useMemo } = React;
 
@@ -13,6 +13,8 @@ interface Value {
   api: ReturnType<typeof createAPI>;
   wsUrl: string;
   masterData: MasterData;
+  currentEmergency?: Partial<Emergency>;
+  setCurrentEmergency: (e: Partial<Emergency>) => void;
 }
 
 const AppContext = createContext<Value>(null as any);
@@ -26,6 +28,9 @@ export const AppContextProvider: React.FunctionComponent = ({ children }) => {
     []
   );
   const [masterData, setMasterData] = useState<MasterData>();
+  const [currentEmergency, setCurrentEmergency] = useState<
+    undefined | Emergency
+  >();
 
   useEffect(() => {
     (async () => {
@@ -47,6 +52,8 @@ export const AppContextProvider: React.FunctionComponent = ({ children }) => {
         api,
         wsUrl: process.env.SERVER_WS_URL,
         masterData,
+        currentEmergency,
+        setCurrentEmergency,
       }}
     >
       {children}
