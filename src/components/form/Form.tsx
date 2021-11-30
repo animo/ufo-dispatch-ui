@@ -55,7 +55,7 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
               value: address,
               onChange: (obj: { label: string; value: any }) => onSelectLocation(obj),
             }}
-            apiOptions={{ apiKey: process.env.GOOGLE_API_KEY as string, language: 'nl', region: 'nl' }}
+            apiOptions={{ apiKey: process.env.REACT_APP_GOOGLE_API_KEY as string, language: 'nl', region: 'nl' }}
             autocompletionRequest={{ componentRestrictions: { country: ['nl'] } }}
           />
         </FormField>
