@@ -45,11 +45,7 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
         <Heading size={900}>Nieuwe Melding Uitzenden</Heading>
         <br />
         <br />
-        <FormField
-          label="Locatie van het ongeval"
-          description="Vul hier het adres in van het ongeval"
-          //validationMessage={INVALID_MESSAGE}
-        >
+        <FormField label="Locatie van het ongeval" description="Vul hier het adres in van het ongeval">
           <GooglePlacesAutocomplete
             selectProps={{
               value: address,
@@ -60,11 +56,7 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
           />
         </FormField>
         <br />
-        <FormField
-          label="Melding type"
-          description="Selecteer het type van de melding"
-          //validationMessage={INVALID_MESSAGE}
-        >
+        <FormField label="Melding type" description="Selecteer het type van de melding">
           <SelectMenu
             options={options}
             onSelect={(item: SelectMenuItem) => setType(item.label as Option)}
@@ -74,11 +66,7 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
           </SelectMenu>
         </FormField>
         <br />
-        <FormField
-          label="Kwalificatie"
-          description="Selecteer een of meerdere kwalificaties"
-          //validationMessage={INVALID_MESSAGE}
-        >
+        <FormField label="Kwalificatie" description="Selecteer een of meerdere kwalificaties">
           <SelectMenu
             isMultiSelect
             options={options}
@@ -103,11 +91,7 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
           ))}
         </ul>
         <br />
-        <FormField
-          label="Actie"
-          description="Vul hier de actie in de moet worden uitgevoerd"
-          //validationMessage={INVALID_MESSAGE}
-        >
+        <FormField label="Actie" description="Vul hier de actie in de moet worden uitgevoerd">
           <Textarea onChange={(input: ChangeEvent<HTMLTextAreaElement>) => setAction(input.target.value)} />
         </FormField>
         <br />
