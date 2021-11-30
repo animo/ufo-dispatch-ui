@@ -1,0 +1,21 @@
+.form-container {
+  margin: 20px;
+  padding: 20px;
+}
+
+.qualifications {
+  list-style-type: none;
+  padding: 0;
+  margin: 15px 20px;
+}
+
+.qualifications li:before {
+  content: '\2014';
+  position: absolute;
+  margin-left: -20px;
+}
+
+.qualification {
+  color: black;
+  font-size: 14px;
+}

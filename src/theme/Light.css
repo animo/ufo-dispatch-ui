@@ -1,0 +1,14 @@
+@media (prefers-color-scheme: light) {
+  :root {
+    --primary: #0099ff;
+    --accent: #00aa66;
+    --background: #ffffff;
+    --background-subdued: #aaaaaa;
+    --text: #000000;
+    --text-subdued: #222222;
+    --warning: #ffc800;
+    --error: #ff4d00;
+    --info: #00bbff;
+    --success: #5ccc00;
+  }
+}

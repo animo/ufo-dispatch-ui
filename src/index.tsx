@@ -1,17 +1,16 @@
-import 'typeface-roboto';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import { App } from './App'
 
-import * as React from 'react';
-import { ChakraProvider } from '@chakra-ui/react';
+import './theme/Dark.css'
+import './theme/Light.css'
 
-import { render } from 'react-dom';
-import { App } from './app';
-import { AppContextProvider } from './app_context';
+require('dotenv').config()
 
-render(
-  <ChakraProvider>
-    <AppContextProvider>
-      <App />
-    </AppContextProvider>
-  </ChakraProvider>,
-  document.querySelector('#app')
-);
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+)
