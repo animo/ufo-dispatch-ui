@@ -1,2 +1,10 @@
+.dialog-content-container {
+  position: relative;
+  min-height: 200px;
+}
 
-
+.dialog-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}

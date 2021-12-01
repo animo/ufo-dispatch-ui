@@ -1,35 +1,59 @@
 import { Button, FormField, Heading, SelectMenu, SelectMenuItem, SideSheet, Textarea } from 'evergreen-ui'
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import GooglePlacesAutocomplete, { geocodeByAddress } from 'react-google-places-autocomplete'
-import { Coordinate } from '../../types'
+import { api } from '../../api'
+import { Coordinate, EmergencyResponse, EmergencyType, Qualification } from '../../types'
 import './Form.css'
 
 interface FormProps {
   isShown: boolean
   setIsShown: (_: boolean) => void
   setHasEmergency: (_: boolean) => void
+  setEmergencyResponse: (_: EmergencyResponse) => void
 }
 
-const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasEmergency }) => {
-  // Mock data
-  const labels = ['Apple', 'Apricot', 'Banana', 'Cherry', 'Cucumber'] as const
-  const options = labels.map((label) => ({ label, value: label }))
-  type Option = typeof labels[number]
+type Item = { label: string; value: string | number }
 
-  const [qualifications, setQualifications] = useState<string[]>([])
-  const [action, setAction] = useState<string | null>(null)
-  const [type, setType] = useState<Option | null>(null)
+const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasEmergency, setEmergencyResponse }) => {
+  const [emergencyTypes, setEmergencyTypes] = useState<EmergencyType[]>([])
+  const [emergencyTypesUI, setEmergencyTypesUI] = useState<Item[]>([])
+  const [selectedEmergencyType, setSelectedEmergencyType] = useState<EmergencyType | null>(null)
+
+  const [qualifications, setQualifications] = useState<Qualification[]>([])
+  const [qualificationsUI, setQualificationsUI] = useState<Item[]>([])
+  const [selectedQualifications, setSelectedQualifications] = useState<Qualification[]>([])
+
+  const [action, setAction] = useState<string>('')
+
   const [location, setLocation] = useState<Coordinate | null>(null)
-  const [address, setAddress] = useState<{ label: string; value: any } | null>(null)
+  const [address, setAddress] = useState<Item | null>(null)
+
+  useEffect(() => {
+    const run = async () => {
+      const em = await api.emergencyType()
+      setEmergencyTypes(em)
+      setEmergencyTypesUI(em.map((e) => ({ label: e.description, value: e.description })))
+
+      const qu = await api.qualifications()
+      setQualifications(qu)
+      setQualificationsUI(qu.map((q) => ({ label: q.name, value: q.name })))
+    }
+    void run()
+  }, [])
 
   const onSendEmergency = async () => {
-    console.log(`type: ${type}`)
-    console.log(`qualifications: ${qualifications}`)
-    console.log(`action: ${action}`)
-    console.log(`address ${address}`)
-    console.log(`location: ${JSON.stringify(location)}`)
-    setHasEmergency(true)
-    setIsShown(false)
+    if (location && selectedEmergencyType) {
+      const body = {
+        ...location,
+        requiredAction: action,
+        emergencyTypeId: selectedEmergencyType.id,
+        qualifications: selectedQualifications.map(() => 0),
+      }
+      const emergencyResponse = await api.post.emergency(body)
+      setEmergencyResponse(emergencyResponse)
+      setHasEmergency(true)
+      setIsShown(false)
+    }
   }
 
   const onSelectLocation = async (obj: { label: string; value: any }) => {
@@ -40,7 +64,7 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
   }
 
   return (
-    <SideSheet isShown={isShown} position="left">
+    <SideSheet isShown={isShown} position="left" onCloseComplete={() => setIsShown(false)}>
       <div className="form-container">
         <Heading size={900}>Nieuwe Melding Uitzenden</Heading>
         <br />
@@ -58,36 +82,41 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
         <br />
         <FormField label="Melding type" description="Selecteer het type van de melding">
           <SelectMenu
-            options={options}
-            onSelect={(item: SelectMenuItem) => setType(item.label as Option)}
+            options={emergencyTypesUI}
+            onSelect={(item: SelectMenuItem) =>
+              setSelectedEmergencyType(emergencyTypes.find((type) => type.description === item.label) ?? null)
+            }
             closeOnSelect
           >
-            <Button>{type || 'Selecteer'}</Button>
+            <Button>{selectedEmergencyType?.description || 'Selecteer'}</Button>
           </SelectMenu>
         </FormField>
         <br />
         <FormField label="Kwalificatie" description="Selecteer een of meerdere kwalificaties">
           <SelectMenu
             isMultiSelect
-            options={options}
-            selected={qualifications}
+            options={qualificationsUI}
+            selected={selectedQualifications.map((q) => q.name)}
             onSelect={(item) => {
-              const selected = [...qualifications, item.value]
-              const selectedItems = selected
-              setQualifications(selectedItems.map((item) => item as string))
+              // TODO: via id
+              const mappedQualification = qualifications.find((q) => q.name === item.label)
+              if (mappedQualification) {
+                setSelectedQualifications(() => [...selectedQualifications, mappedQualification])
+              }
             }}
             onDeselect={(item) => {
-              const deselectedItemIndex = qualifications.indexOf(item.value as string)
-              const selectedItems = qualifications.filter((_item, i) => i !== deselectedItemIndex)
-              setQualifications(selectedItems)
+              const selectedItems = selectedQualifications.filter((q) => q.name !== item.label)
+              setSelectedQualifications(selectedItems)
             }}
           >
             <Button>Selecteer</Button>
           </SelectMenu>
         </FormField>
         <ul className="qualifications">
-          {qualifications.map((qualification) => (
-            <li className="qualification">{qualification}</li>
+          {selectedQualifications.map((qualification) => (
+            <li className="qualification" key={qualification.id}>
+              {qualification.name}
+            </li>
           ))}
         </ul>
         <br />

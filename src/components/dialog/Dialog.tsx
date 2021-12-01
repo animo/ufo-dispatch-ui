@@ -10,7 +10,7 @@ const Dialog: React.FunctionComponent<DialogProps> = ({ children, hasEmergency }
   return (
     <Pane
       minHeight={200}
-      width={400}
+      minWidth={400}
       backgroundColor="white"
       className="dialog-container"
       display="flex"
@@ -18,9 +18,7 @@ const Dialog: React.FunctionComponent<DialogProps> = ({ children, hasEmergency }
       alignItems="center"
     >
       {hasEmergency ? <div /> : <Text>Er is geen ongeval bezig.</Text>}
-      <Pane position="absolute" bottom={15} right={15}>
-        {children}
-      </Pane>
+      {children}
     </Pane>
   )
 }

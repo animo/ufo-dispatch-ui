@@ -4,15 +4,8 @@
 }
 
 .qualifications {
-  list-style-type: none;
   padding: 0;
   margin: 15px 20px;
-}
-
-.qualifications li:before {
-  content: '\2014';
-  position: absolute;
-  margin-left: -20px;
 }
 
 .qualification {
