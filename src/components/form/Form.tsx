@@ -8,13 +8,12 @@ import './Form.css'
 interface FormProps {
   isShown: boolean
   setIsShown: (_: boolean) => void
-  setHasEmergency: (_: boolean) => void
-  setEmergencyResponse: (_: EmergencyResponse) => void
+  setEmergency: (_: EmergencyResponse | null) => void
 }
 
 type Item = { label: string; value: string | number }
 
-const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasEmergency, setEmergencyResponse }) => {
+const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setEmergency }) => {
   const [emergencyTypes, setEmergencyTypes] = useState<EmergencyType[]>([])
   const [emergencyTypesUI, setEmergencyTypesUI] = useState<Item[]>([])
   const [selectedEmergencyType, setSelectedEmergencyType] = useState<EmergencyType | null>(null)
@@ -50,8 +49,12 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setHasE
         qualifications: selectedQualifications.map(() => 0),
       }
       const emergencyResponse = await api.post.emergency(body)
-      setEmergencyResponse(emergencyResponse)
-      setHasEmergency(true)
+      setEmergency(emergencyResponse)
+      setSelectedEmergencyType(null)
+      setSelectedQualifications([])
+      setLocation(null)
+      setAddress(null)
+      setAction('')
       setIsShown(false)
     }
   }

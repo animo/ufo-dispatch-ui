@@ -4,41 +4,39 @@ import { api } from '../../api'
 import { Dialog, Form, Map } from '../../components'
 import { StatusIndicator } from '../../components'
 import { useInterval } from '../../hooks'
-import { EmergencyResponse } from '../../types'
+import { ActiveResponder, EmergencyResponse } from '../../types'
 import './Home.css'
+
+const POLL_RATE = 5000
 
 const Home: React.FunctionComponent = () => {
   const [isSideSheetShown, setIsSideSheetShown] = useState(false)
-  const [hasEmergency, setHasEmergency] = useState(true)
-  const [emergencyResponse, setEmergencyResponse] = useState<EmergencyResponse | null>(null)
+  const [emergency, setEmergency] = useState<EmergencyResponse | null>(null)
+  const [activeResponders, setActiveResponders] = useState<ActiveResponder[] | null>(null)
 
   useInterval(async () => {
-    console.log('call')
-    const emergencyResp = await api.emergencyById(1)
-    console.log(emergencyResp)
-    setEmergencyResponse(emergencyResp)
-  }, 20000)
+    if (emergency) {
+      setEmergency(await api.emergencyById(emergency.id))
+      setActiveResponders(await api.activeResponder(emergency.id))
+      console.log(activeResponders)
+    }
+  }, POLL_RATE)
 
   return (
     <>
-      <Form
-        isShown={isSideSheetShown}
-        setIsShown={setIsSideSheetShown}
-        setHasEmergency={setHasEmergency}
-        setEmergencyResponse={setEmergencyResponse}
-      />
-      <Dialog hasEmergency={hasEmergency}>
-        {hasEmergency && emergencyResponse ? (
+      <Form isShown={isSideSheetShown} setIsShown={setIsSideSheetShown} setEmergency={setEmergency} />
+      <Dialog>
+        {emergency ? (
           <div className="dialog-content-container">
-            <h4>{emergencyResponse.type.definition}</h4>
+            <h4>{emergency.type.definition}</h4>
             <ul>
-              {emergencyResponse.potentialResponders?.map((responder) => (
+              {emergency.potentialResponders?.map((responder) => (
                 <li key={responder.id}>
                   {responder.connectionId} - <StatusIndicator state={responder.state} />
                 </li>
               ))}
             </ul>
-            <Button className="dialog-button" onClick={() => setHasEmergency(false)} intent="danger" size="large">
+            <Button className="dialog-button" onClick={() => setEmergency(null)} intent="danger" size="large">
               ONGEVAL BEEINDIGEN
             </Button>
           </div>
@@ -48,7 +46,10 @@ const Home: React.FunctionComponent = () => {
           </Button>
         )}
       </Dialog>
-      <Map />
+      <Map
+        activeResponders={activeResponders}
+        emergency={emergency ? { latitude: emergency.latitude, longitude: emergency.longitude } : null}
+      />
     </>
   )
 }

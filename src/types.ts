@@ -7,6 +7,11 @@ export enum PotentialResponderState {
   Active = 'ACTIVE',
 }
 
+type Base = {
+  createdAt: string
+  id: number
+}
+
 export enum NotificationService {
   Android = 'Android',
   Ios = 'Ios',
@@ -17,11 +22,9 @@ export type Coordinate = {
   longitude: number
 }
 
-export type EmergencyType = {
-  id: number
+export type EmergencyType = Base & {
   code: string
   description: string
-  createdAt: string
   definition: string
   classifications: {
     first: string
@@ -30,13 +33,11 @@ export type EmergencyType = {
   }
 }
 
-export type Qualification = {
-  id: number
+export type Qualification = Base & {
   name: string
   schema: string
   credentialDefinition: string
   emergencies: any[]
-  createdAt: string
 }
 
 export type AddEmergencyPostBody = Coordinate & {
@@ -53,13 +54,16 @@ export type EmergencyResponse = Coordinate & {
   type: EmergencyType
 }
 
-export type PotentialResponder = {
-  id: number
+export type PotentialResponder = Base & {
   emergency: EmergencyType
   currentIndex?: string
   state: PotentialResponderState
   notificationService: NotificationService
   notificationToken: string
   connectionId: string
-  createdAt: string
 }
+
+export type ActiveResponder = Base &
+  Coordinate & {
+    potentialResponders: PotentialResponder
+  }

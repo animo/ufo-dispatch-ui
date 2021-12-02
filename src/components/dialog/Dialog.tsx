@@ -1,12 +1,8 @@
-import { Pane, Text } from 'evergreen-ui'
+import { Pane } from 'evergreen-ui'
 import React from 'react'
 import './Dialog.css'
 
-interface DialogProps {
-  hasEmergency: boolean
-}
-
-const Dialog: React.FunctionComponent<DialogProps> = ({ children, hasEmergency }) => {
+const Dialog: React.FunctionComponent = ({ children }) => {
   return (
     <Pane
       minHeight={200}
@@ -17,7 +13,6 @@ const Dialog: React.FunctionComponent<DialogProps> = ({ children, hasEmergency }
       justifyContent="center"
       alignItems="center"
     >
-      {hasEmergency ? <div /> : <Text>Er is geen ongeval bezig.</Text>}
       {children}
     </Pane>
   )
