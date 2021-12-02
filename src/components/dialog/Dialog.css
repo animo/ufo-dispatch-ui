@@ -1,4 +1,5 @@
 .dialog-container {
+  max-width: 750px;
   position: absolute;
   margin: 20px;
   border-radius: 10px;
