@@ -48,7 +48,8 @@ export type AddEmergencyPostBody = Coordinate & {
 
 export type EmergencyResponse = Coordinate & {
   id: number
-  potentialResponders?: PotentialResponder[]
+  potentialResponders: PotentialResponder[]
+  activeResponders: ActiveResponder[]
   qualifications: Qualification[]
   requiredAction: string
   type: EmergencyType

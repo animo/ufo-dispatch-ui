@@ -1,5 +1,5 @@
-import { ActiveResponder, AddEmergencyPostBody, EmergencyResponse, EmergencyType, Qualification } from './types'
 import axios from 'axios'
+import { AddEmergencyPostBody, EmergencyResponse, EmergencyType, Qualification } from './types'
 
 const endpoint = 'http://localhost:8080'
 
@@ -11,7 +11,6 @@ const api = {
   emergencyType: () => get<EmergencyType[]>('emergencyType'),
   qualifications: () => get<Qualification[]>('qualification'),
   emergency: () => get('emergency'),
-  activeResponder: (id: number) => get<ActiveResponder[]>(`active-responder/${id}`),
   emergencyById: (id: number) => get<EmergencyResponse>(`emergency/${id}`),
   post: {
     emergency: (body: AddEmergencyPostBody) => post<EmergencyResponse>('emergency', body),
