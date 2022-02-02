@@ -23,14 +23,14 @@ export type Coordinate = {
 }
 
 export type EmergencyType = Base & {
+  id: string
+  createdAt: string
   code: string
-  description: string
+  title: string
   definition: string
-  classifications: {
-    first: string
-    second: string
-    thrid: string
-  }
+  classification_1: string
+  classification_2: string
+  classification_3: string
 }
 
 export type Qualification = Base & {

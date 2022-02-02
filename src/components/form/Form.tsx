@@ -31,7 +31,7 @@ const Form: React.FunctionComponent<FormProps> = ({ isShown, setIsShown, setEmer
     const run = async () => {
       const em = await api.emergencyType()
       setEmergencyTypes(em)
-      setEmergencyTypesUI(em.map((e) => ({ label: e.description, value: e.description })))
+      setEmergencyTypesUI(em.map((e) => ({ label: e.title, value: e.title })))
 
       const qu = await api.qualifications()
       setQualifications(qu)

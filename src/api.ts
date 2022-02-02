@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { AddEmergencyPostBody, EmergencyResponse, EmergencyType, Qualification } from './types'
 
-const endpoint = 'http://localhost:8080'
+const endpoint = 'https://debug.dispatch.ufo.animo.id'
 
 const get = <R>(path: string): Promise<R> => axios.get(`${endpoint}/${path}`).then((res) => res.data)
 const post = <R>(path: string, body: Record<string, unknown>): Promise<R> =>
